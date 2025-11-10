@@ -399,6 +399,25 @@ const buildEditor = ({
       const workspace = getWorkspace();
       workspace?.sendToBack();
     },
+    bringToFront: () => {
+      canvas.getActiveObjects().forEach((object) => {
+        canvas.bringToFront(object);
+      });
+
+      canvas.renderAll();
+      
+      const workspace = getWorkspace();
+      workspace?.sendToBack();
+    },
+    sendToBack: () => {
+      canvas.getActiveObjects().forEach((object) => {
+        canvas.sendToBack(object);
+      });
+
+      canvas.renderAll();
+      const workspace = getWorkspace();
+      workspace?.sendToBack();
+    },
     changeFontFamily: (value: string) => {
       setFontFamily(value);
       canvas.getActiveObjects().forEach((object) => {
