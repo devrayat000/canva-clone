@@ -107,7 +107,8 @@ export type ActiveTool =
   | "settings"
   | "ai"
   | "remove-bg"
-  | "templates";
+  | "templates"
+  | "layers";
 
 export const FILL_COLOR = "rgba(0,0,0,1)";
 export const STROKE_COLOR = "rgba(0,0,0,1)";
@@ -245,6 +246,8 @@ export interface Editor {
   changeOpacity: (value: number) => void;
   bringForward: () => void;
   sendBackwards: () => void;
+  bringToFront: () => void;
+  sendToBack: () => void;
   changeStrokeWidth: (value: number) => void;
   changeFillColor: (value: string) => void;
   changeStrokeColor: (value: string) => void;
