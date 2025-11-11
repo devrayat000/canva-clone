@@ -42,7 +42,7 @@ export const Sidebar = ({
         />
         <SidebarItem
           icon={Settings}
-          label="Settings"
+          label="Background"
           isActive={activeTool === "settings"}
           onClick={() => onChangeActiveTool("settings")}
         />

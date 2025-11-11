@@ -66,14 +66,6 @@ export const Editor = ({ initialData }: EditorProps) => {
   });
 
   const onChangeActiveTool = useCallback((tool: ActiveTool) => {
-    if (tool === "draw") {
-      editor?.enableDrawingMode();
-    }
-
-    if (activeTool === "draw") {
-      editor?.disableDrawingMode();
-    }
-
     if (tool === activeTool) {
       return setActiveTool("select");
     }
