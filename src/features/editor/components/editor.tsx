@@ -30,6 +30,7 @@ import { AiSidebar } from "@/features/editor/components/ai-sidebar";
 import { TemplateSidebar } from "@/features/editor/components/template-sidebar";
 import { RemoveBgSidebar } from "@/features/editor/components/remove-bg-sidebar";
 import { SettingsSidebar } from "@/features/editor/components/settings-sidebar";
+import { EditorContextMenu } from "@/features/editor/components/editor-context-menu";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -192,9 +193,11 @@ export const Editor = ({ initialData }: EditorProps) => {
             onChangeActiveTool={onChangeActiveTool}
             key={JSON.stringify(editor?.canvas.getActiveObject())}
           />
-          <div className="flex-1 h-[calc(100%-124px)] bg-muted" ref={containerRef}>
-            <canvas ref={canvasRef} />
-          </div>
+          <EditorContextMenu editor={editor}>
+            <div className="flex-1 h-[calc(100%-124px)] bg-muted" ref={containerRef}>
+              <canvas ref={canvasRef} />
+            </div>
+          </EditorContextMenu>
           <Footer editor={editor} />
         </main>
       </div>

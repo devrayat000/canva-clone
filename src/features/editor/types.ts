@@ -245,6 +245,8 @@ export interface Editor {
   changeOpacity: (value: number) => void;
   bringForward: () => void;
   sendBackwards: () => void;
+  bringToFront: () => void;
+  sendToBack: () => void;
   changeStrokeWidth: (value: number) => void;
   changeFillColor: (value: string) => void;
   changeStrokeColor: (value: string) => void;
