@@ -18,7 +18,9 @@ import {
   AlignRight,
   Trash,
   SquareSplitHorizontal,
-  Copy
+  Copy,
+  ChevronsUp,
+  ChevronsDown
 } from "lucide-react";
 
 import { isTextType } from "@/features/editor/utils";
@@ -407,6 +409,28 @@ export const Toolbar = ({
             variant="ghost"
           >
             <ArrowDown className="size-4" />
+          </Button>
+        </Hint>
+      </div>
+      <div className="flex items-center h-full justify-center">
+        <Hint label="Bring to front" side="bottom" sideOffset={5}>
+          <Button
+            onClick={() => editor?.bringToFront()}
+            size="icon"
+            variant="ghost"
+          >
+            <ChevronsUp className="size-4" />
+          </Button>
+        </Hint>
+      </div>
+      <div className="flex items-center h-full justify-center">
+        <Hint label="Send to back" side="bottom" sideOffset={5}>
+          <Button
+            onClick={() => editor?.sendToBack()}
+            size="icon"
+            variant="ghost"
+          >
+            <ChevronsDown className="size-4" />
           </Button>
         </Hint>
       </div>
