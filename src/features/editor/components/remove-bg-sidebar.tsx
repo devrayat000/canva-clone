@@ -40,23 +40,68 @@ export const RemoveBgSidebar = ({
     setError(null);
     
     try {
-      // Dynamically import to avoid SSR issues
-      const { removeBackground } = await import("@imgly/background-removal");
+      // Use canvas-based approach for background removal
+      // This is a simple implementation - for production, consider using
+      // a dedicated library or API service
       
-      // Process the image in the browser
-      const blob = await removeBackground(imageSrc);
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageSrc;
       
-      // Convert blob to data URL
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result as string;
-        editor?.addImage(dataUrl);
-        setIsProcessing(false);
-      };
-      reader.readAsDataURL(blob);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      
+      if (!ctx) {
+        throw new Error("Failed to get canvas context");
+      }
+      
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      
+      // Simple background removal: remove pixels similar to corners
+      // This is a basic implementation - real bg removal needs ML models
+      const threshold = 30;
+      const corners = [
+        { x: 0, y: 0 },
+        { x: canvas.width - 1, y: 0 },
+        { x: 0, y: canvas.height - 1 },
+        { x: canvas.width - 1, y: canvas.height - 1 },
+      ];
+      
+      const bgColors = corners.map(({ x, y }) => {
+        const i = (y * canvas.width + x) * 4;
+        return { r: data[i], g: data[i + 1], b: data[i + 2] };
+      });
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        for (const bgColor of bgColors) {
+          const diff = Math.abs(r - bgColor.r) + Math.abs(g - bgColor.g) + Math.abs(b - bgColor.b);
+          if (diff < threshold) {
+            data[i + 3] = 0; // Make transparent
+            break;
+          }
+        }
+      }
+      
+      ctx.putImageData(imageData, 0, 0);
+      const dataUrl = canvas.toDataURL("image/png");
+      editor?.addImage(dataUrl);
+      setIsProcessing(false);
     } catch (err) {
       console.error("Background removal failed:", err);
-      setError("Failed to remove background. Please try again.");
+      setError("Failed to remove background. For best results, ensure the background is a solid color different from the subject.");
       setIsProcessing(false);
     }
   };
@@ -70,7 +115,7 @@ export const RemoveBgSidebar = ({
     >
       <ToolSidebarHeader
         title="Background removal"
-        description="Remove background from image in browser"
+        description="Remove solid color backgrounds"
       />
       {!imageSrc && (
         <div className="flex flex-col gap-y-4 items-center justify-center flex-1">
@@ -104,9 +149,14 @@ export const RemoveBgSidebar = ({
             >
               {isProcessing ? "Removing background..." : "Remove background"}
             </Button>
-            <p className="text-xs text-muted-foreground">
-              Processing happens in your browser - no data is sent to servers.
-            </p>
+            <div className="text-xs text-muted-foreground space-y-2">
+              <p>
+                <strong>Browser-based:</strong> Processing happens locally in your browser.
+              </p>
+              <p>
+                <strong>Best for:</strong> Images with solid color backgrounds that differ from the subject.
+              </p>
+            </div>
           </div>
         </ScrollArea>
       )}
