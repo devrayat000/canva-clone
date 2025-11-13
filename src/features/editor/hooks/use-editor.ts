@@ -429,6 +429,29 @@ const buildEditor = ({
       });
       canvas.renderAll();
     },
+    changeTextShadow: (shadow: string) => {
+      canvas.getActiveObjects().forEach((object) => {
+        if (isTextType(object.type)) {
+          // @ts-ignore
+          // shadow property exists in fabric.js
+          object.set({ shadow: shadow });
+        }
+      });
+      canvas.renderAll();
+    },
+    getActiveTextShadow: () => {
+      const selectedObject = selectedObjects[0];
+
+      if (!selectedObject) {
+        return "";
+      }
+
+      // @ts-ignore
+      // shadow property exists in fabric.js
+      const value = selectedObject.get("shadow") || "";
+      
+      return typeof value === "string" ? value : "";
+    },
     changeFillColor: (value: string) => {
       setFillColor(value);
       canvas.getActiveObjects().forEach((object) => {

@@ -1,11 +1,10 @@
 import Image from "next/image";
 import { AlertTriangle } from "lucide-react";
+import { useState } from "react";
 
 import { ActiveTool, Editor } from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
-
-import { useRemoveBg } from "@/features/ai/api/use-remove-bg";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,8 @@ export const RemoveBgSidebar = ({
   activeTool,
   onChangeActiveTool,
 }: RemoveBgSidebarProps) => {
-  const mutation = useRemoveBg();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const selectedObject = editor?.selectedObjects[0];
 
@@ -33,14 +33,32 @@ export const RemoveBgSidebar = ({
     onChangeActiveTool("select");
   };
 
-  const onClick = () => {
-    mutation.mutate({
-      image: imageSrc,
-    }, {
-      onSuccess: ({ data }) => {
-        editor?.addImage(data);
-      },
-    });
+  const onClick = async () => {
+    if (!imageSrc) return;
+    
+    setIsProcessing(true);
+    setError(null);
+    
+    try {
+      // Dynamically import to avoid SSR issues
+      const { removeBackground } = await import("@imgly/background-removal");
+      
+      // Process the image in the browser
+      const blob = await removeBackground(imageSrc);
+      
+      // Convert blob to data URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        editor?.addImage(dataUrl);
+        setIsProcessing(false);
+      };
+      reader.readAsDataURL(blob);
+    } catch (err) {
+      console.error("Background removal failed:", err);
+      setError("Failed to remove background. Please try again.");
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -52,7 +70,7 @@ export const RemoveBgSidebar = ({
     >
       <ToolSidebarHeader
         title="Background removal"
-        description="Remove background from image using AI"
+        description="Remove background from image in browser"
       />
       {!imageSrc && (
         <div className="flex flex-col gap-y-4 items-center justify-center flex-1">
@@ -67,7 +85,7 @@ export const RemoveBgSidebar = ({
           <div className="p-4 space-y-4">
             <div className={cn(
               "relative aspect-square rounded-md overflow-hidden transition bg-muted",
-              mutation.isPending && "opacity-50",
+              isProcessing && "opacity-50",
             )}>
               <Image
                 src={imageSrc}
@@ -76,13 +94,19 @@ export const RemoveBgSidebar = ({
                 className="object-cover"
               />
             </div>
+            {error && (
+              <p className="text-red-500 text-sm">{error}</p>
+            )}
             <Button
-              disabled={mutation.isPending}
+              disabled={isProcessing}
               onClick={onClick}
               className="w-full"
             >
-              Remove background
+              {isProcessing ? "Removing background..." : "Remove background"}
             </Button>
+            <p className="text-xs text-muted-foreground">
+              Processing happens in your browser - no data is sent to servers.
+            </p>
           </div>
         </ScrollArea>
       )}

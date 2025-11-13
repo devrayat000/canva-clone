@@ -37,6 +37,9 @@ export const filters = [
   "resize",
   "saturation",
   "gamma",
+  "retro",
+  "warm",
+  "cool",
 ];
 
 export const fonts = [
@@ -58,6 +61,14 @@ export const fonts = [
   "Lucida Sans Unicode",
   "Geneva",
   "Lucida Console",
+  "Bebas Neue",
+  "Playfair Display",
+  "Oswald",
+  "Russo One",
+  "Pacifico",
+  "Lobster",
+  "Righteous",
+  "Anton",
 ];
 
 export const selectionDependentTools = [
@@ -68,6 +79,7 @@ export const selectionDependentTools = [
   "remove-bg",
   "stroke-color",
   "stroke-width",
+  "text-effects",
 ];
 
 export const colors = [
@@ -104,7 +116,8 @@ export type ActiveTool =
   | "opacity"
   | "filter"
   | "settings"
-  | "remove-bg";
+  | "remove-bg"
+  | "text-effects";
 
 export const FILL_COLOR = "rgba(0,0,0,1)";
 export const STROKE_COLOR = "rgba(0,0,0,1)";
@@ -163,6 +176,13 @@ export const TEXT_OPTIONS = {
   fill: FILL_COLOR,
   fontSize: FONT_SIZE,
   fontFamily: FONT_FAMILY,
+};
+
+// Canvas size presets for election posters
+export const CANVAS_SIZE_PRESETS = {
+  SQUARE: { width: 1080, height: 1080, name: "Square (1080x1080)" },
+  PORTRAIT: { width: 1080, height: 1920, name: "Portrait (1080x1920)" },
+  LANDSCAPE: { width: 1920, height: 1080, name: "Landscape (1920x1080)" },
 };
 
 export interface EditorHookProps {
@@ -238,6 +258,8 @@ export interface Editor {
   getActiveFontFamily: () => string;
   changeFontFamily: (value: string) => void;
   addText: (value: string, options?: ITextboxOptions) => void;
+  changeTextShadow: (shadow: string) => void;
+  getActiveTextShadow: () => string;
   getActiveOpacity: () => number;
   changeOpacity: (value: number) => void;
   bringForward: () => void;

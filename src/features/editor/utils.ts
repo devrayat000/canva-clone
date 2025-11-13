@@ -134,6 +134,26 @@ export const createFilter = (value: string) => {
         saturation: 0.7,
       });
       break;
+    case "retro":
+      // Retro effect: combination of sepia and vintage
+      effect = new fabric.Image.filters.Sepia();
+      break;
+    case "warm":
+      // Warm effect: orange blend
+      effect = new fabric.Image.filters.BlendColor({ 
+        color: "#ff8c00",
+        mode: "multiply",
+        alpha: 0.2,
+      });
+      break;
+    case "cool":
+      // Cool effect: blue blend
+      effect = new fabric.Image.filters.BlendColor({ 
+        color: "#4169e1",
+        mode: "multiply",
+        alpha: 0.2,
+      });
+      break;
     default:
       effect = null;
       return;
