@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-
-import { SubscriptionAlert } from "@/features/subscriptions/components/subscription-alert";
 
 import { auth } from "@/auth";
 import { Modals } from "@/components/modals";
@@ -11,11 +8,9 @@ import { Providers } from "@/components/providers";
 
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: "The Canvas",
-  description: "Build Something Great!",
+  title: "Election Poster Maker",
+  description: "Create stunning election posters with ease!",
 };
 
 export default async function RootLayout({
@@ -28,11 +23,10 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={inter.className}>
+        <body className="font-sans antialiased">
           <Providers>
             <Toaster />
             <Modals />
-            <SubscriptionAlert />
             {children}
           </Providers>
         </body>

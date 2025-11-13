@@ -11,6 +11,22 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+// Prebuilt backgrounds suitable for election posters
+const PRESET_BACKGROUNDS = [
+  { name: "White", color: "#ffffff" },
+  { name: "Light Blue", color: "#e3f2fd" },
+  { name: "Light Red", color: "#ffebee" },
+  { name: "Light Green", color: "#e8f5e9" },
+  { name: "Light Yellow", color: "#fffde7" },
+  { name: "Light Orange", color: "#fff3e0" },
+  { name: "Navy Blue", color: "#1a237e" },
+  { name: "Dark Red", color: "#b71c1c" },
+  { name: "Dark Green", color: "#1b5e20" },
+  { name: "Royal Blue", color: "#0d47a1" },
+  { name: "Maroon", color: "#880e4f" },
+  { name: "Dark Gray", color: "#263238" },
+];
+
 interface SettingsSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
@@ -71,8 +87,8 @@ export const SettingsSidebar = ({
       )}
     >
       <ToolSidebarHeader
-        title="Settings"
-        description="Change the look of your workspace"
+        title="Background"
+        description="Choose or customize your poster background"
       />
       <ScrollArea>
         <form className="space-y-4 p-4" onSubmit={onSubmit}>
@@ -103,10 +119,33 @@ export const SettingsSidebar = ({
           </Button>
         </form>
         <div className="p-4">
-          <ColorPicker
-            value={background as string} // We dont support gradients or patterns
-            onChange={changeBackground}
-          />
+          <div className="space-y-2 mb-4">
+            <Label>Preset Backgrounds</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {PRESET_BACKGROUNDS.map((preset) => (
+                <button
+                  key={preset.color}
+                  type="button"
+                  className={cn(
+                    "h-16 rounded-md border-2 transition-all hover:scale-105",
+                    background === preset.color ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-300"
+                  )}
+                  style={{ backgroundColor: preset.color }}
+                  onClick={() => changeBackground(preset.color)}
+                  title={preset.name}
+                >
+                  <span className="sr-only">{preset.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Custom Color</Label>
+            <ColorPicker
+              value={background as string} // We dont support gradients or patterns
+              onChange={changeBackground}
+            />
+          </div>
         </div>
       </ScrollArea>
       <ToolSidebarClose onClick={onClose} />
