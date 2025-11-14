@@ -1,6 +1,7 @@
 import { IoTriangle } from "react-icons/io5";
-import { FaDiamond } from "react-icons/fa6";
+import { FaDiamond, FaStar, FaAward } from "react-icons/fa6";
 import { FaCircle, FaSquare, FaSquareFull } from "react-icons/fa";
+import { MdLabel } from "react-icons/md";
 
 import { ActiveTool, Editor } from "@/features/editor/types";
 import { ShapeTool } from "@/features/editor/components/shape-tool";
@@ -62,6 +63,18 @@ export const ShapeSidebar = ({
           <ShapeTool
             onClick={() => editor?.addDiamond()}
             icon={FaDiamond}
+          />
+          <ShapeTool
+            onClick={() => editor?.addStar()}
+            icon={FaStar}
+          />
+          <ShapeTool
+            onClick={() => editor?.addRibbon()}
+            icon={MdLabel}
+          />
+          <ShapeTool
+            onClick={() => editor?.addStarburst()}
+            icon={FaAward}
           />
         </div>
       </ScrollArea>

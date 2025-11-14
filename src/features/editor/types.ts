@@ -169,6 +169,39 @@ export const TRIANGLE_OPTIONS = {
   angle: 0,
 };
 
+export const STAR_OPTIONS = {
+  left: 100,
+  top: 100,
+  fill: FILL_COLOR,
+  stroke: STROKE_COLOR,
+  strokeWidth: STROKE_WIDTH,
+  width: 400,
+  height: 400,
+  angle: 0,
+};
+
+export const RIBBON_OPTIONS = {
+  left: 100,
+  top: 100,
+  fill: FILL_COLOR,
+  stroke: STROKE_COLOR,
+  strokeWidth: STROKE_WIDTH,
+  width: 500,
+  height: 150,
+  angle: 0,
+};
+
+export const STARBURST_OPTIONS = {
+  left: 100,
+  top: 100,
+  fill: FILL_COLOR,
+  stroke: STROKE_COLOR,
+  strokeWidth: STROKE_WIDTH,
+  width: 400,
+  height: 400,
+  angle: 0,
+};
+
 export const TEXT_OPTIONS = {
   type: "textbox",
   left: 100,
@@ -276,6 +309,9 @@ export interface Editor {
   addTriangle: () => void;
   addInverseTriangle: () => void;
   addDiamond: () => void;
+  addStar: () => void;
+  addRibbon: () => void;
+  addStarburst: () => void;
   canvas: fabric.Canvas;
   getActiveFillColor: () => string;
   getActiveStrokeColor: () => string;
