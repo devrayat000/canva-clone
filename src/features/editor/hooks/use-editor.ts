@@ -880,6 +880,7 @@ export const useEditor = ({
         transparentCorners: false,
         borderOpacityWhenMoving: 1,
         cornerStrokeColor: "#3b82f6",
+        lockRotation: false, // Explicitly enable rotation
       });
 
       const initialWorkspace = new fabric.Rect({
@@ -900,7 +901,8 @@ export const useEditor = ({
 
       initialCanvas.add(initialWorkspace);
       initialCanvas.centerObject(initialWorkspace);
-      initialCanvas.clipPath = initialWorkspace;
+      // Removed clipPath to allow objects to move beyond canvas boundaries
+      // initialCanvas.clipPath = initialWorkspace;
 
       setCanvas(initialCanvas);
       setContainer(initialContainer);
