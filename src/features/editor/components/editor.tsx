@@ -29,6 +29,9 @@ import { RemoveBgSidebar } from "@/features/editor/components/remove-bg-sidebar"
 import { SettingsSidebar } from "@/features/editor/components/settings-sidebar";
 import { TextEffectsSidebar } from "@/features/editor/components/text-effects-sidebar";
 import { EditorContextMenu } from "@/features/editor/components/editor-context-menu";
+import { UploadDropzone } from "@/lib/uploadthing";
+import { useSession } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditorProps {
   initialData: ResponseType["data"];
@@ -36,6 +39,8 @@ interface EditorProps {
 
 export const Editor = ({ initialData }: EditorProps) => {
   const { mutate } = useUpdateProject(initialData.id);
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
@@ -174,8 +179,39 @@ export const Editor = ({ initialData }: EditorProps) => {
             key={JSON.stringify(editor?.canvas.getActiveObject())}
           />
           <EditorContextMenu editor={editor}>
-            <div className="flex-1 h-[calc(100%-124px)] bg-muted" ref={containerRef}>
+            <div className="flex-1 h-[calc(100%-124px)] bg-muted relative" ref={containerRef}>
               <canvas ref={canvasRef} />
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="pointer-events-auto opacity-0 hover:opacity-100 transition-opacity">
+                  <UploadDropzone
+                    appearance={{
+                      container: "border-2 border-dashed border-gray-300 bg-white/50 backdrop-blur-sm rounded-lg h-full",
+                      label: "text-sm font-medium text-gray-700",
+                      allowedContent: "text-xs text-gray-500",
+                      button: "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium",
+                    }}
+                    onBeforeUploadBegin={(files) => {
+                      return files.map(
+                        (f) =>
+                          new File(
+                            [f],
+                            `${session?.user?.id}_${crypto.randomUUID()}_${f.name}`,
+                            { type: f.type }
+                          )
+                      );
+                    }}
+                    content={{
+                      label: "Drop images here or click to upload",
+                      allowedContent: "Images up to 4MB",
+                    }}
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res) => {
+                      editor?.addImage(res[0].url);
+                      queryClient.invalidateQueries({ queryKey: ["assets"] });
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </EditorContextMenu>
           <Footer editor={editor} />

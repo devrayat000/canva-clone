@@ -1,4 +1,4 @@
-import Image from "next/image";
+import NextImage from "next/image";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 
@@ -132,7 +132,7 @@ export const RemoveBgSidebar = ({
               "relative aspect-square rounded-md overflow-hidden transition bg-muted",
               isProcessing && "opacity-50",
             )}>
-              <Image
+              <NextImage
                 src={imageSrc}
                 fill
                 alt="Image"
