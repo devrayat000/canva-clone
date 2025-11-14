@@ -9,6 +9,9 @@ import {
   CIRCLE_OPTIONS,
   DIAMOND_OPTIONS,
   TRIANGLE_OPTIONS,
+  STAR_OPTIONS,
+  RIBBON_OPTIONS,
+  STARBURST_OPTIONS,
   BuildEditorProps, 
   RECTANGLE_OPTIONS,
   EditorHookProps,
@@ -574,6 +577,102 @@ const buildEditor = ({
           strokeDashArray: strokeDashArray,
         }
       );
+      addToCanvas(object);
+    },
+    addStar: () => {
+      const HEIGHT = STAR_OPTIONS.height;
+      const WIDTH = STAR_OPTIONS.width;
+      const cx = WIDTH / 2;
+      const cy = HEIGHT / 2;
+      const spikes = 5;
+      const outerRadius = WIDTH / 2;
+      const innerRadius = WIDTH / 4;
+
+      const points = [];
+      const step = Math.PI / spikes;
+
+      for (let i = 0; i < spikes * 2; i++) {
+        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+        const angle = i * step - Math.PI / 2;
+        points.push({
+          x: cx + radius * Math.cos(angle),
+          y: cy + radius * Math.sin(angle),
+        });
+      }
+
+      const object = new fabric.Polygon(points, {
+        ...STAR_OPTIONS,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        strokeDashArray: strokeDashArray,
+      });
+
+      addToCanvas(object);
+    },
+    addRibbon: () => {
+      const HEIGHT = RIBBON_OPTIONS.height;
+      const WIDTH = RIBBON_OPTIONS.width;
+      const foldSize = 30;
+      const foldHeight = 40;
+
+      const points = [
+        { x: 0, y: 0 },
+        { x: WIDTH, y: 0 },
+        { x: WIDTH, y: HEIGHT },
+        { x: WIDTH - foldSize, y: HEIGHT + foldHeight },
+        { x: WIDTH - foldSize * 2, y: HEIGHT },
+        { x: foldSize * 2, y: HEIGHT },
+        { x: foldSize, y: HEIGHT + foldHeight },
+        { x: 0, y: HEIGHT },
+      ];
+
+      const object = new fabric.Polygon(points, {
+        ...RIBBON_OPTIONS,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        strokeDashArray: strokeDashArray,
+      });
+
+      addToCanvas(object);
+    },
+    addStarburst: () => {
+      const HEIGHT = STARBURST_OPTIONS.height;
+      const WIDTH = STARBURST_OPTIONS.width;
+      const cx = WIDTH / 2;
+      const cy = HEIGHT / 2;
+      const spikes = 16;
+      const outerRadius = WIDTH / 2;
+      const innerRadius = WIDTH / 2.5;
+
+      const points = [];
+      const step = (Math.PI * 2) / spikes;
+
+      for (let i = 0; i < spikes; i++) {
+        // Outer point
+        const outerAngle = i * step - Math.PI / 2;
+        points.push({
+          x: cx + outerRadius * Math.cos(outerAngle),
+          y: cy + outerRadius * Math.sin(outerAngle),
+        });
+        
+        // Inner point
+        const innerAngle = (i + 0.5) * step - Math.PI / 2;
+        points.push({
+          x: cx + innerRadius * Math.cos(innerAngle),
+          y: cy + innerRadius * Math.sin(innerAngle),
+        });
+      }
+
+      const object = new fabric.Polygon(points, {
+        ...STARBURST_OPTIONS,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        strokeDashArray: strokeDashArray,
+      });
+
       addToCanvas(object);
     },
     canvas,
