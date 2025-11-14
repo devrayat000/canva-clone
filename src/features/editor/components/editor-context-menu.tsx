@@ -35,7 +35,7 @@ export const EditorContextMenu = ({
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger disabled={disabled}>
+      <ContextMenuTrigger disabled={disabled} className="h-full">
         {children}
       </ContextMenuTrigger>
       <ContextMenuContent className="w-48">
