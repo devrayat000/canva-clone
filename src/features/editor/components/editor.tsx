@@ -7,10 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ResponseType } from "@/features/projects/api/use-get-project";
 import { useUpdateProject } from "@/features/projects/api/use-update-project";
 
-import { 
-  ActiveTool, 
-  selectionDependentTools
-} from "@/features/editor/types";
+import { ActiveTool, selectionDependentTools } from "@/features/editor/types";
 import { Navbar } from "@/features/editor/components/navbar";
 import { Footer } from "@/features/editor/components/footer";
 import { useEditor } from "@/features/editor/hooks/use-editor";
@@ -32,28 +29,26 @@ import { EditorContextMenu } from "@/features/editor/components/editor-context-m
 import { UploadDropzone } from "@/lib/uploadthing";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 interface EditorProps {
   initialData: ResponseType["data"];
-};
+}
 
 export const Editor = ({ initialData }: EditorProps) => {
+  const [dragging, setDragging] = useState(false);
+  const dragCounterRef = useRef(0);
   const { mutate } = useUpdateProject(initialData.id);
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
-    debounce(
-      (values: { 
-        json: string,
-        height: number,
-        width: number,
-      }) => {
-        mutate(values);
-    },
-    500
-  ), [mutate]);
+    debounce((values: { json: string; height: number; width: number }) => {
+      mutate(values);
+    }, 500),
+    [mutate]
+  );
 
   const [activeTool, setActiveTool] = useState<ActiveTool>("select");
 
@@ -71,16 +66,84 @@ export const Editor = ({ initialData }: EditorProps) => {
     saveCallback: debouncedSave,
   });
 
-  const onChangeActiveTool = useCallback((tool: ActiveTool) => {
-    if (tool === activeTool) {
-      return setActiveTool("select");
-    }
-    
-    setActiveTool(tool);
-  }, [activeTool, editor]);
+  const onChangeActiveTool = useCallback(
+    (tool: ActiveTool) => {
+      if (tool === activeTool) {
+        return setActiveTool("select");
+      }
+
+      setActiveTool(tool);
+    },
+    [activeTool, editor]
+  );
 
   const canvasRef = useRef(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const hideDropzone = useCallback(() => {
+    dragCounterRef.current = 0;
+    setDragging(false);
+  }, []);
+
+  useEffect(() => {
+    const handleWindowDrop = () => hideDropzone();
+    const handleWindowDragEnd = () => hideDropzone();
+
+    window.addEventListener("drop", handleWindowDrop);
+    window.addEventListener("dragend", handleWindowDragEnd);
+
+    return () => {
+      window.removeEventListener("drop", handleWindowDrop);
+      window.removeEventListener("dragend", handleWindowDragEnd);
+    };
+  }, [hideDropzone]);
+
+  const isFileDragEvent = useCallback((event: React.DragEvent) => {
+    return Array.from(event.dataTransfer?.types ?? []).includes("Files");
+  }, []);
+
+  const handleDragEnter = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      if (!isFileDragEvent(event)) return;
+      event.preventDefault();
+      dragCounterRef.current += 1;
+      setDragging(true);
+    },
+    [isFileDragEvent]
+  );
+
+  const handleDragLeave = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      if (!isFileDragEvent(event)) return;
+      event.preventDefault();
+      dragCounterRef.current = Math.max(0, dragCounterRef.current - 1);
+      if (dragCounterRef.current === 0) {
+        hideDropzone();
+      }
+    },
+    [hideDropzone, isFileDragEvent]
+  );
+
+  const handleDragOver = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      if (!isFileDragEvent(event)) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+      if (!dragging) {
+        setDragging(true);
+      }
+    },
+    [dragging, isFileDragEvent]
+  );
+
+  const handleDrop = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      if (!event.dataTransfer?.files?.length) return;
+      event.preventDefault();
+      hideDropzone();
+    },
+    [hideDropzone]
+  );
 
   useEffect(() => {
     const canvas = new fabric.Canvas(canvasRef.current, {
@@ -179,39 +242,52 @@ export const Editor = ({ initialData }: EditorProps) => {
             key={JSON.stringify(editor?.canvas.getActiveObject())}
           />
           <EditorContextMenu editor={editor}>
-            <div className="flex-1 h-[calc(100%-124px)] bg-muted relative" ref={containerRef}>
+            <div
+              className="flex-1 h-full bg-muted relative"
+              ref={containerRef}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+            >
               <canvas ref={canvasRef} />
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="pointer-events-auto opacity-0 hover:opacity-100 transition-opacity">
-                  <UploadDropzone
-                    appearance={{
-                      container: "border-2 border-dashed border-gray-300 bg-white/50 backdrop-blur-sm rounded-lg h-full",
-                      label: "text-sm font-medium text-gray-700",
-                      allowedContent: "text-xs text-gray-500",
-                      button: "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium",
-                    }}
-                    onBeforeUploadBegin={(files) => {
-                      return files.map(
-                        (f) =>
-                          new File(
-                            [f],
-                            `${session?.user?.id}_${crypto.randomUUID()}_${f.name}`,
-                            { type: f.type }
-                          )
-                      );
-                    }}
-                    content={{
-                      label: "Drop images here or click to upload",
-                      allowedContent: "Images up to 4MB",
-                    }}
-                    endpoint="imageUploader"
-                    onClientUploadComplete={(res) => {
-                      editor?.addImage(res[0].url);
-                      queryClient.invalidateQueries({ queryKey: ["assets"] });
-                    }}
-                  />
-                </div>
-              </div>
+              <UploadDropzone
+                appearance={{
+                  container: cn(
+                    "absolute inset-0 m-2 border-2 border-dashed border-gray-300 bg-white/20 backdrop-blur-sm rounded-lg transition-opacity duration-200",
+                    dragging
+                      ? "opacity-100 pointer-events-auto"
+                      : "opacity-0 pointer-events-none"
+                  ),
+                  label: "text-sm font-medium text-gray-700",
+                  allowedContent: "text-xs text-gray-500",
+                  button:
+                    "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium",
+                }}
+                config={{ mode: "auto", cn, appendOnPaste: true }}
+                onBeforeUploadBegin={(files) => {
+                  return files.map(
+                    (f) =>
+                      new File(
+                        [f],
+                        `${session?.user?.id}_${crypto.randomUUID()}_${f.name}`,
+                        { type: f.type }
+                      )
+                  );
+                }}
+                content={{
+                  label: "Drop images here or click to upload",
+                  allowedContent: "Images up to 4MB",
+                }}
+                endpoint="imageUploader"
+                onUploadBegin={() => hideDropzone()}
+                onUploadError={() => hideDropzone()}
+                onClientUploadComplete={(res) => {
+                  console.log("Files uploaded:", res);
+                  editor?.addImage(res[0].url);
+                  queryClient.invalidateQueries({ queryKey: ["assets"] });
+                }}
+              />
             </div>
           </EditorContextMenu>
           <Footer editor={editor} />

@@ -20,14 +20,14 @@ export const ourFileRouter = {
       // Save asset to database
       await db.insert(assets).values({
         userId: metadata.userId!,
-        url: file.url,
+        url: file.ufsUrl,
         name: file.name,
         type: file.type,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
 
-      return { url: file.url };
+      return { url: file.ufsUrl };
     }),
 } satisfies FileRouter;
 
