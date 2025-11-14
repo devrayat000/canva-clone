@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { ActiveTool, Editor } from "@/features/editor/types";
+import { ActiveTool, Editor, CANVAS_SIZE_PRESETS } from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
 import { ColorPicker } from "@/features/editor/components/color-picker";
@@ -87,11 +87,63 @@ export const SettingsSidebar = ({
       )}
     >
       <ToolSidebarHeader
-        title="Background"
-        description="Choose or customize your poster background"
+        title="Canvas Settings"
+        description="Customize your canvas size and background"
       />
       <ScrollArea>
-        <form className="space-y-4 p-4" onSubmit={onSubmit}>
+        <div className="p-4 space-y-4">
+          <div className="space-y-2">
+            <Label>Canvas Size Presets (Election Posters)</Label>
+            <div className="grid grid-cols-1 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => {
+                  setWidth(String(CANVAS_SIZE_PRESETS.SQUARE.width));
+                  setHeight(String(CANVAS_SIZE_PRESETS.SQUARE.height));
+                  editor?.changeSize({
+                    width: CANVAS_SIZE_PRESETS.SQUARE.width,
+                    height: CANVAS_SIZE_PRESETS.SQUARE.height,
+                  });
+                }}
+              >
+                📱 {CANVAS_SIZE_PRESETS.SQUARE.name}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => {
+                  setWidth(String(CANVAS_SIZE_PRESETS.PORTRAIT.width));
+                  setHeight(String(CANVAS_SIZE_PRESETS.PORTRAIT.height));
+                  editor?.changeSize({
+                    width: CANVAS_SIZE_PRESETS.PORTRAIT.width,
+                    height: CANVAS_SIZE_PRESETS.PORTRAIT.height,
+                  });
+                }}
+              >
+                📄 {CANVAS_SIZE_PRESETS.PORTRAIT.name}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => {
+                  setWidth(String(CANVAS_SIZE_PRESETS.LANDSCAPE.width));
+                  setHeight(String(CANVAS_SIZE_PRESETS.LANDSCAPE.height));
+                  editor?.changeSize({
+                    width: CANVAS_SIZE_PRESETS.LANDSCAPE.width,
+                    height: CANVAS_SIZE_PRESETS.LANDSCAPE.height,
+                  });
+                }}
+              >
+                🖼️ {CANVAS_SIZE_PRESETS.LANDSCAPE.name}
+              </Button>
+            </div>
+          </div>
+        </div>
+        <form className="space-y-4 p-4 border-t" onSubmit={onSubmit}>
           <div className="space-y-2">
             <Label>
               Height
