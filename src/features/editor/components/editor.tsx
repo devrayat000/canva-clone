@@ -207,7 +207,7 @@ export const Editor = ({ initialData }: EditorProps) => {
                     endpoint="imageUploader"
                     onClientUploadComplete={(res) => {
                       editor?.addImage(res[0].url);
-                      queryClient.invalidateQueries({ queryKey: ["user-assets"] });
+                      queryClient.invalidateQueries({ queryKey: ["assets"] });
                     }}
                   />
                 </div>

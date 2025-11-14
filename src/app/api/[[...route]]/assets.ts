@@ -3,7 +3,7 @@ import { verifyAuth } from "@hono/auth-js";
 import { desc, eq } from "drizzle-orm";
 
 import { db } from "@/db/drizzle";
-import { userAssets } from "@/db/schema";
+import { assets } from "@/db/schema";
 
 const app = new Hono()
   .get("/", verifyAuth(), async (c) => {
@@ -13,13 +13,13 @@ const app = new Hono()
       return c.json({ error: "Unauthorized" }, 401);
     }
 
-    const assets = await db
+    const data = await db
       .select()
-      .from(userAssets)
-      .where(eq(userAssets.userId, auth.token.id))
-      .orderBy(desc(userAssets.createdAt));
+      .from(assets)
+      .where(eq(assets.userId, auth.token.id))
+      .orderBy(desc(assets.createdAt));
 
-    return c.json({ data: assets });
+    return c.json({ data });
   });
 
 export default app;

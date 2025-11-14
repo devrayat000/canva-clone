@@ -23,7 +23,7 @@ export const users = pgTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects),
-  userAssets: many(userAssets),
+  assets: many(assets),
 }));
 
 export const accounts = pgTable(
@@ -140,7 +140,7 @@ export const subscriptions = pgTable("subscription", {
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
 });
 
-export const userAssets = pgTable("user_asset", {
+export const assets = pgTable("asset", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -156,11 +156,11 @@ export const userAssets = pgTable("user_asset", {
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
 });
 
-export const userAssetsRelations = relations(userAssets, ({ one }) => ({
+export const assetsRelations = relations(assets, ({ one }) => ({
   user: one(users, {
-    fields: [userAssets.userId],
+    fields: [assets.userId],
     references: [users.id],
   }),
 }));
 
-export const userAssetsInsertSchema = createInsertSchema(userAssets);
+export const assetsInsertSchema = createInsertSchema(assets);

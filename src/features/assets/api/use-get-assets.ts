@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
 
-export const useGetUserAssets = () => {
+export const useGetAssets = () => {
   const query = useQuery({
-    queryKey: ["user-assets"],
+    queryKey: ["assets"],
     queryFn: async () => {
-      const response = await client.api["user-assets"].$get();
+      const response = await client.api.assets.$get();
 
       if (!response.ok) {
-        throw new Error("Failed to fetch user assets");
+        throw new Error("Failed to fetch assets");
       }
 
       const { data } = await response.json();

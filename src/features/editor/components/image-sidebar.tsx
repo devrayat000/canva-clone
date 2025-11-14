@@ -5,7 +5,7 @@ import { ActiveTool, Editor } from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
 
-import { useGetUserAssets } from "@/features/user-assets/api/use-get-user-assets";
+import { useGetAssets } from "@/features/assets/api/use-get-assets";
 
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
@@ -24,7 +24,7 @@ export const ImageSidebar = ({
   activeTool,
   onChangeActiveTool,
 }: ImageSidebarProps) => {
-  const { data, isLoading, isError } = useGetUserAssets();
+  const { data, isLoading, isError } = useGetAssets();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
@@ -66,8 +66,8 @@ export const ImageSidebar = ({
           endpoint="imageUploader"
           onClientUploadComplete={(res) => {
             editor?.addImage(res[0].url);
-            // Invalidate query to refetch user assets
-            queryClient.invalidateQueries({ queryKey: ["user-assets"] });
+            // Invalidate query to refetch assets
+            queryClient.invalidateQueries({ queryKey: ["assets"] });
           }}
         />
       </div>

@@ -3,7 +3,7 @@ import { UploadThingError } from "uploadthing/server";
 
 import { auth } from "@/auth";
 import { db } from "@/db/drizzle";
-import { userAssets } from "@/db/schema";
+import { assets } from "@/db/schema";
 
 const f = createUploadthing();
 
@@ -18,7 +18,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // Save asset to database
-      await db.insert(userAssets).values({
+      await db.insert(assets).values({
         userId: metadata.userId!,
         url: file.url,
         name: file.name,
