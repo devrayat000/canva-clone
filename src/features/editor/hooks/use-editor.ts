@@ -1,8 +1,8 @@
 import { fabric } from "fabric";
 import { useCallback, useState, useMemo, useRef } from "react";
 
-import { 
-  Editor, 
+import {
+  Editor,
   FILL_COLOR,
   STROKE_WIDTH,
   STROKE_COLOR,
@@ -12,7 +12,7 @@ import {
   STAR_OPTIONS,
   RIBBON_OPTIONS,
   STARBURST_OPTIONS,
-  BuildEditorProps, 
+  BuildEditorProps,
   RECTANGLE_OPTIONS,
   EditorHookProps,
   STROKE_DASH_ARRAY,
@@ -23,11 +23,11 @@ import {
   JSON_KEYS,
 } from "@/features/editor/types";
 import { useHistory } from "@/features/editor/hooks/use-history";
-import { 
-  createFilter, 
-  downloadFile, 
+import {
+  createFilter,
+  downloadFile,
   isTextType,
-  transformText
+  transformText,
 } from "@/features/editor/utils";
 import { useHotkeys } from "@/features/editor/hooks/use-hotkeys";
 import { useClipboard } from "@/features/editor/hooks//use-clipboard";
@@ -107,7 +107,7 @@ const buildEditor = ({
 
     await transformText(dataUrl.objects);
     const fileString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(dataUrl, null, "\t"),
+      JSON.stringify(dataUrl, null, "\t")
     )}`;
     downloadFile(fileString, "json");
   };
@@ -121,9 +121,7 @@ const buildEditor = ({
   };
 
   const getWorkspace = () => {
-    return canvas
-    .getObjects()
-    .find((object) => object.name === "clip");
+    return canvas.getObjects().find((object) => object.name === "clip");
   };
 
   const center = (object: fabric.Object) => {
@@ -167,7 +165,7 @@ const buildEditor = ({
       const center = canvas.getCenter();
       canvas.zoomToPoint(
         new fabric.Point(center.left, center.top),
-        zoomRatio < 0.2 ? 0.2 : zoomRatio,
+        zoomRatio < 0.2 ? 0.2 : zoomRatio
       );
     },
     changeSize: (value: { width: number; height: number }) => {
@@ -207,6 +205,14 @@ const buildEditor = ({
 
           imageObject.filters = effect ? [effect] : [];
           imageObject.applyFilters();
+          const existingData = (imageObject.get("data") || {}) as Record<
+            string,
+            unknown
+          >;
+          imageObject.set("data", {
+            ...existingData,
+            appliedFilter: value,
+          });
           canvas.renderAll();
         }
       });
@@ -224,7 +230,7 @@ const buildEditor = ({
         },
         {
           crossOrigin: "anonymous",
-        },
+        }
       );
     },
     delete: () => {
@@ -389,7 +395,7 @@ const buildEditor = ({
       });
 
       canvas.renderAll();
-      
+
       const workspace = getWorkspace();
       workspace?.sendToBack();
     },
@@ -408,7 +414,7 @@ const buildEditor = ({
       });
 
       canvas.renderAll();
-      
+
       const workspace = getWorkspace();
       workspace?.sendToBack();
     },
@@ -452,7 +458,7 @@ const buildEditor = ({
       // @ts-ignore
       // shadow property exists in fabric.js
       const value = selectedObject.get("shadow") || "";
-      
+
       return typeof value === "string" ? value : "";
     },
     changeFillColor: (value: string) => {
@@ -656,7 +662,7 @@ const buildEditor = ({
           x: cx + outerRadius * Math.cos(outerAngle),
           y: cy + outerRadius * Math.sin(outerAngle),
         });
-        
+
         // Inner point
         const innerAngle = (i + 0.5) * step - Math.PI / 2;
         points.push({
@@ -770,22 +776,16 @@ export const useEditor = ({
   const [fillColor, setFillColor] = useState(FILL_COLOR);
   const [strokeColor, setStrokeColor] = useState(STROKE_COLOR);
   const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH);
-  const [strokeDashArray, setStrokeDashArray] = useState<number[]>(STROKE_DASH_ARRAY);
+  const [strokeDashArray, setStrokeDashArray] =
+    useState<number[]>(STROKE_DASH_ARRAY);
 
   useWindowEvents();
 
-  const { 
-    save, 
-    canRedo, 
-    canUndo, 
-    undo, 
-    redo,
-    canvasHistory,
-    setHistoryIndex,
-  } = useHistory({ 
-    canvas,
-    saveCallback
-  });
+  const { save, canRedo, canUndo, undo, redo, canvasHistory, setHistoryIndex } =
+    useHistory({
+      canvas,
+      saveCallback,
+    });
 
   const { copy, paste } = useClipboard({ canvas });
 
@@ -845,8 +845,7 @@ export const useEditor = ({
     }
 
     return undefined;
-  }, 
-  [
+  }, [
     canRedo,
     canUndo,
     undo,
@@ -907,9 +906,7 @@ export const useEditor = ({
       setCanvas(initialCanvas);
       setContainer(initialContainer);
 
-      const currentState = JSON.stringify(
-        initialCanvas.toJSON(JSON_KEYS)
-      );
+      const currentState = JSON.stringify(initialCanvas.toJSON(JSON_KEYS));
       canvasHistory.current = [currentState];
       setHistoryIndex(0);
     },

@@ -74,7 +74,7 @@ export const Editor = ({ initialData }: EditorProps) => {
 
       setActiveTool(tool);
     },
-    [activeTool, editor]
+    [activeTool]
   );
 
   const canvasRef = useRef(null);
