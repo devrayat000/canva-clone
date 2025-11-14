@@ -1,17 +1,17 @@
 import Image from "next/image";
-import Link from "next/link";
 import { AlertTriangle, Loader, Upload } from "lucide-react";
 
 import { ActiveTool, Editor } from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
 
-import { useGetImages } from "@/features/images/api/use-get-images";
+import { useGetUserAssets } from "@/features/user-assets/api/use-get-user-assets";
 
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSession } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ImageSidebarProps {
   editor: Editor | undefined;
@@ -24,8 +24,9 @@ export const ImageSidebar = ({
   activeTool,
   onChangeActiveTool,
 }: ImageSidebarProps) => {
-  const { data, isLoading, isError } = useGetImages();
+  const { data, isLoading, isError } = useGetUserAssets();
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   const onClose = () => {
     onChangeActiveTool("select");
@@ -65,6 +66,8 @@ export const ImageSidebar = ({
           endpoint="imageUploader"
           onClientUploadComplete={(res) => {
             editor?.addImage(res[0].url);
+            // Invalidate query to refetch user assets
+            queryClient.invalidateQueries({ queryKey: ["user-assets"] });
           }}
         />
       </div>
@@ -85,26 +88,22 @@ export const ImageSidebar = ({
         <div className="p-4">
           <div className="grid grid-cols-2 gap-4">
             {data &&
-              data.map((image) => {
+              data.map((asset) => {
                 return (
                   <button
-                    onClick={() => editor?.addImage(image.urls.regular)}
-                    key={image.id}
+                    onClick={() => editor?.addImage(asset.url)}
+                    key={asset.id}
                     className="relative w-full h-[100px] group hover:opacity-75 transition bg-muted rounded-sm overflow-hidden border"
                   >
-                    <img
-                      src={image?.urls?.small || image?.urls?.thumb}
-                      alt={image.alt_description || "Image"}
+                    <Image
+                      src={asset.url}
+                      alt={asset.name}
+                      fill
                       className="object-cover"
-                      loading="lazy"
                     />
-                    <Link
-                      target="_blank"
-                      href={image.links.html}
-                      className="opacity-0 group-hover:opacity-100 absolute left-0 bottom-0 w-full text-[10px] truncate text-white hover:underline p-1 bg-black/50 text-left"
-                    >
-                      {image.user.name}
-                    </Link>
+                    <div className="opacity-0 group-hover:opacity-100 absolute left-0 bottom-0 w-full text-[10px] truncate text-white p-1 bg-black/50 text-left">
+                      {asset.name}
+                    </div>
                   </button>
                 );
               })}

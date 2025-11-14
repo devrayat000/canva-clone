@@ -2,6 +2,8 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
 import { auth } from "@/auth";
+import { db } from "@/db/drizzle";
+import { userAssets } from "@/db/schema";
 
 const f = createUploadthing();
 
@@ -15,7 +17,17 @@ export const ourFileRouter = {
       return { userId: session.user?.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      return { url: file.ufsUrl };
+      // Save asset to database
+      await db.insert(userAssets).values({
+        userId: metadata.userId!,
+        url: file.url,
+        name: file.name,
+        type: file.type,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      return { url: file.url };
     }),
 } satisfies FileRouter;
 

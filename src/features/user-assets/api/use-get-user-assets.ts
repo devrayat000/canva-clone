@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
 
-export const useGetImages = () => {
+export const useGetUserAssets = () => {
   const query = useQuery({
-    queryKey: ["images"],
+    queryKey: ["user-assets"],
     queryFn: async () => {
-      const response = await client.api.images.$get();
+      const response = await client.api["user-assets"].$get();
 
       if (!response.ok) {
-        throw new Error("Failed to fetch images");
+        throw new Error("Failed to fetch user assets");
       }
 
       const { data } = await response.json();
