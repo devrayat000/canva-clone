@@ -11,6 +11,7 @@ import { useGetImages } from "@/features/images/api/use-get-images";
 import { cn } from "@/lib/utils";
 import { UploadButton } from "@/lib/uploadthing";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useSession } from "next-auth/react";
 
 interface ImageSidebarProps {
   editor: Editor | undefined;
@@ -18,8 +19,13 @@ interface ImageSidebarProps {
   onChangeActiveTool: (tool: ActiveTool) => void;
 }
 
-export const ImageSidebar = ({ editor, activeTool, onChangeActiveTool }: ImageSidebarProps) => {
+export const ImageSidebar = ({
+  editor,
+  activeTool,
+  onChangeActiveTool,
+}: ImageSidebarProps) => {
   const { data, isLoading, isError } = useGetImages();
+  const { data: session } = useSession();
 
   const onClose = () => {
     onChangeActiveTool("select");
@@ -32,12 +38,26 @@ export const ImageSidebar = ({ editor, activeTool, onChangeActiveTool }: ImageSi
         activeTool === "images" ? "visible" : "hidden"
       )}
     >
-      <ToolSidebarHeader title="Images" description="Add images to your canvas" />
+      <ToolSidebarHeader
+        title="Images"
+        description="Add images to your canvas"
+      />
       <div className="p-4 border-b">
         <UploadButton
           appearance={{
             button: "w-full text-sm font-medium",
             allowedContent: "hidden",
+          }}
+          onBeforeUploadBegin={(files) => {
+            // Preprocess files before uploading (e.g. rename them)
+            return files.map(
+              (f) =>
+                new File(
+                  [f],
+                  `${session?.user?.id}_${crypto.randomUUID()}_${f.name}`,
+                  { type: f.type }
+                )
+            );
           }}
           content={{
             button: "Upload Image",
@@ -56,7 +76,9 @@ export const ImageSidebar = ({ editor, activeTool, onChangeActiveTool }: ImageSi
       {isError && (
         <div className="flex flex-col gap-y-4 items-center justify-center flex-1">
           <AlertTriangle className="size-4 text-muted-foreground" />
-          <p className="text-muted-foreground text-xs">Failed to fetch images</p>
+          <p className="text-muted-foreground text-xs">
+            Failed to fetch images
+          </p>
         </div>
       )}
       <ScrollArea>

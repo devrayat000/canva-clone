@@ -1,5 +1,8 @@
 @config "../../tailwind.config.ts";
 @import "tailwindcss";
+
+@import "uploadthing/tw/v4";
+@source "../../node_modules/@uploadthing/react/dist";
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@400;700&family=Oswald:wght@400;700&family=Russo+One&family=Pacifico&family=Lobster&family=Righteous&family=Anton&display=swap");
 
 html,
