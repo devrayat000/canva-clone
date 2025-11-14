@@ -284,7 +284,7 @@ export const Editor = ({ initialData }: EditorProps) => {
                 onUploadError={() => hideDropzone()}
                 onClientUploadComplete={(res) => {
                   console.log("Files uploaded:", res);
-                  editor?.addImage(res[0].url);
+                  editor?.addImage(res[0].ufsUrl);
                   queryClient.invalidateQueries({ queryKey: ["assets"] });
                 }}
               />

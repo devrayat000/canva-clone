@@ -65,7 +65,7 @@ export const ImageSidebar = ({
           }}
           endpoint="imageUploader"
           onClientUploadComplete={(res) => {
-            editor?.addImage(res[0].url);
+            editor?.addImage(res[0].ufsUrl);
             // Invalidate query to refetch assets
             queryClient.invalidateQueries({ queryKey: ["assets"] });
           }}
