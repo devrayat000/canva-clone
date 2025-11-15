@@ -93,7 +93,7 @@ export const ImageSidebar = ({
                   <button
                     onClick={() => editor?.addImage(asset.url)}
                     key={asset.id}
-                    className="relative w-full h-[100px] group hover:opacity-75 transition bg-muted rounded-sm overflow-hidden border"
+                    className="relative w-full h-[100px] group hover:opacity-75 transition bg-muted rounded-xs overflow-hidden border"
                   >
                     <Image
                       src={asset.url}

@@ -1,8 +1,4 @@
-import { 
-  ActiveTool, 
-  Editor,
-  fonts, 
-} from "@/features/editor/types";
+import { ActiveTool, Editor, fonts } from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
 
@@ -14,7 +10,7 @@ interface FontSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
-};
+}
 
 export const FontSidebar = ({
   editor,
@@ -31,15 +27,12 @@ export const FontSidebar = ({
     <aside
       className={cn(
         "bg-white relative border-r z-[40] w-[360px] h-full flex flex-col",
-        activeTool === "font" ? "visible" : "hidden",
+        activeTool === "font" ? "visible" : "hidden"
       )}
     >
-      <ToolSidebarHeader
-        title="Font"
-        description="Change the text font"
-      />
+      <ToolSidebarHeader title="Font" description="Change the text font" />
       <ScrollArea>
-        <div className="p-4 space-y-1 border-b">
+        <div className="p-4 flex flex-col gap-y-1 border-b">
           {fonts.map((font) => (
             <Button
               key={font}
@@ -47,12 +40,12 @@ export const FontSidebar = ({
               size="lg"
               className={cn(
                 "w-full h-16 justify-start text-left",
-                value === font && "border-2 border-blue-500",
+                value === font && "border-2 border-blue-500"
               )}
               style={{
                 fontFamily: font,
                 fontSize: "16px",
-                padding: "8px 16px"
+                padding: "8px 16px",
               }}
               onClick={() => editor?.changeFontFamily(font)}
             >

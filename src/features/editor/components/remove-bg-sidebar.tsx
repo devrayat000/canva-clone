@@ -101,7 +101,7 @@ export const RemoveBgSidebar = ({
       )}
       {imageSrc && (
         <ScrollArea>
-          <div className="p-4 space-y-4">
+          <div className="p-4 flex flex-col gap-y-4">
             <div
               className={cn(
                 "relative aspect-square rounded-md overflow-hidden transition bg-muted",
@@ -128,7 +128,7 @@ export const RemoveBgSidebar = ({
             >
               {isProcessing ? "Removing background..." : "Remove background"}
             </Button>
-            <div className="text-xs text-muted-foreground space-y-2">
+            <div className="text-xs text-muted-foreground flex flex-col gap-y-2">
               <p>
                 <strong>Browser-based:</strong> Processing happens locally in
                 your browser.

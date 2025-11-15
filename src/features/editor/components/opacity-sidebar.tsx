@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { 
-  ActiveTool, 
-  Editor, 
-} from "@/features/editor/types";
+import { ActiveTool, Editor } from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
 
@@ -15,7 +12,7 @@ interface OpacitySidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
-};
+}
 
 export const OpacitySidebar = ({
   editor,
@@ -23,7 +20,10 @@ export const OpacitySidebar = ({
   onChangeActiveTool,
 }: OpacitySidebarProps) => {
   const initialValue = editor?.getActiveOpacity() || 1;
-  const selectedObject = useMemo(() => editor?.selectedObjects[0], [editor?.selectedObjects]);
+  const selectedObject = useMemo(
+    () => editor?.selectedObjects[0],
+    [editor?.selectedObjects]
+  );
 
   const [opacity, setOpacity] = useState(initialValue);
 
@@ -46,7 +46,7 @@ export const OpacitySidebar = ({
     <aside
       className={cn(
         "bg-white relative border-r z-[40] w-[360px] h-full flex flex-col",
-        activeTool === "opacity" ? "visible" : "hidden",
+        activeTool === "opacity" ? "visible" : "hidden"
       )}
     >
       <ToolSidebarHeader
@@ -54,7 +54,7 @@ export const OpacitySidebar = ({
         description="Change the opacity of the selected object"
       />
       <ScrollArea>
-        <div className="p-4 space-y-4 border-b">
+        <div className="p-4 flex flex-col gap-y-4 border-b">
           <Slider
             value={[opacity]}
             onValueChange={(values) => onChange(values[0])}

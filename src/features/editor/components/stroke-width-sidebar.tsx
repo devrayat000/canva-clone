@@ -1,8 +1,8 @@
-import { 
-  ActiveTool, 
-  Editor, 
-  STROKE_DASH_ARRAY, 
-  STROKE_WIDTH
+import {
+  ActiveTool,
+  Editor,
+  STROKE_DASH_ARRAY,
+  STROKE_WIDTH,
 } from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
@@ -17,7 +17,7 @@ interface StrokeWidthSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
-};
+}
 
 export const StrokeWidthSidebar = ({
   editor,
@@ -37,13 +37,13 @@ export const StrokeWidthSidebar = ({
 
   const onChangeStrokeType = (value: number[]) => {
     editor?.changeStrokeDashArray(value);
-  }
+  };
 
   return (
     <aside
       className={cn(
         "bg-white relative border-r z-[40] w-[360px] h-full flex flex-col",
-        activeTool === "stroke-width" ? "visible" : "hidden",
+        activeTool === "stroke-width" ? "visible" : "hidden"
       )}
     >
       <ToolSidebarHeader
@@ -51,19 +51,15 @@ export const StrokeWidthSidebar = ({
         description="Modify the stroke of your element"
       />
       <ScrollArea>
-        <div className="p-4 space-y-4 border-b">
-          <Label className="text-sm">
-            Stroke width
-          </Label>
+        <div className="p-4 flex flex-col gap-y-4 border-b">
+          <Label className="text-sm">Stroke width</Label>
           <Slider
             value={[widthValue]}
             onValueChange={(values) => onChangeStrokeWidth(values[0])}
           />
         </div>
-        <div className="p-4 space-y-4 border-b">
-          <Label className="text-sm">
-            Stroke type
-          </Label>
+        <div className="p-4 flex flex-col gap-y-4 border-b">
+          <Label className="text-sm">Stroke type</Label>
           <Button
             onClick={() => onChangeStrokeType([])}
             variant="secondary"
@@ -73,7 +69,7 @@ export const StrokeWidthSidebar = ({
               JSON.stringify(typeValue) === `[]` && "border-2 border-blue-500"
             )}
             style={{
-              padding: "8px 16px"
+              padding: "8px 16px",
             }}
           >
             <div className="w-full border-black rounded-full border-4" />
@@ -84,10 +80,11 @@ export const StrokeWidthSidebar = ({
             size="lg"
             className={cn(
               "w-full h-16 justify-start text-left",
-              JSON.stringify(typeValue) === `[5,5]` && "border-2 border-blue-500"
+              JSON.stringify(typeValue) === `[5,5]` &&
+                "border-2 border-blue-500"
             )}
             style={{
-              padding: "8px 16px"
+              padding: "8px 16px",
             }}
           >
             <div className="w-full border-black rounded-full border-4 border-dashed" />

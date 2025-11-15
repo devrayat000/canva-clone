@@ -6,14 +6,11 @@ import { rgbaObjectToString } from "@/features/editor/utils";
 interface ColorPickerProps {
   value: string;
   onChange: (value: string) => void;
-};
+}
 
-export const ColorPicker = ({
-  value,
-  onChange,
-}: ColorPickerProps) => {
+export const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full flex flex-col gap-y-4">
       <ChromePicker
         color={value}
         onChange={(color) => {

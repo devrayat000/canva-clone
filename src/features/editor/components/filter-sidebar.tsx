@@ -132,7 +132,7 @@ const FilterPreview = ({
         !disabled && "hover:border-blue-500 hover:bg-blue-50"
       )}
     >
-      <div className="relative w-[100px] h-[100px] bg-gray-100 rounded overflow-hidden">
+      <div className="relative w-[100px] h-[100px] bg-gray-100 rounded-sm overflow-hidden">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">
             Loading...

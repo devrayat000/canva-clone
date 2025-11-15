@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { ActiveTool, Editor, CANVAS_SIZE_PRESETS } from "@/features/editor/types";
+import {
+  ActiveTool,
+  Editor,
+  CANVAS_SIZE_PRESETS,
+} from "@/features/editor/types";
 import { ToolSidebarClose } from "@/features/editor/components/tool-sidebar-close";
 import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-header";
 import { ColorPicker } from "@/features/editor/components/color-picker";
@@ -31,7 +35,7 @@ interface SettingsSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
-};
+}
 
 export const SettingsSidebar = ({
   editor,
@@ -42,7 +46,10 @@ export const SettingsSidebar = ({
 
   const initialWidth = useMemo(() => `${workspace?.width ?? 0}`, [workspace]);
   const initialHeight = useMemo(() => `${workspace?.height ?? 0}`, [workspace]);
-  const initialBackground = useMemo(() => workspace?.fill ?? "#ffffff", [workspace]);
+  const initialBackground = useMemo(
+    () => workspace?.fill ?? "#ffffff",
+    [workspace]
+  );
 
   const [width, setWidth] = useState(initialWidth);
   const [height, setHeight] = useState(initialHeight);
@@ -52,12 +59,7 @@ export const SettingsSidebar = ({
     setWidth(initialWidth);
     setHeight(initialHeight);
     setBackground(initialBackground);
-  }, 
-  [
-    initialWidth,
-    initialHeight,
-    initialBackground
-  ]);
+  }, [initialWidth, initialHeight, initialBackground]);
 
   const changeWidth = (value: string) => setWidth(value);
   const changeHeight = (value: string) => setHeight(value);
@@ -73,7 +75,7 @@ export const SettingsSidebar = ({
       width: parseInt(width, 10),
       height: parseInt(height, 10),
     });
-  }
+  };
 
   const onClose = () => {
     onChangeActiveTool("select");
@@ -82,8 +84,8 @@ export const SettingsSidebar = ({
   return (
     <aside
       className={cn(
-        "bg-white relative border-r z-[40] w-[360px] h-full flex flex-col",
-        activeTool === "settings" ? "visible" : "hidden",
+        "bg-white relative border-r z-40 w-[360px] h-full flex flex-col",
+        activeTool === "settings" ? "visible" : "hidden"
       )}
     >
       <ToolSidebarHeader
@@ -91,8 +93,8 @@ export const SettingsSidebar = ({
         description="Customize your canvas size and background"
       />
       <ScrollArea>
-        <div className="p-4 space-y-4">
-          <div className="space-y-2">
+        <div className="p-4 flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-2">
             <Label>Canvas Size Presets (Election Posters)</Label>
             <div className="grid grid-cols-1 gap-2">
               <Button
@@ -143,11 +145,12 @@ export const SettingsSidebar = ({
             </div>
           </div>
         </div>
-        <form className="space-y-4 p-4 border-t" onSubmit={onSubmit}>
-          <div className="space-y-2">
-            <Label>
-              Height
-            </Label>
+        <form
+          className="flex flex-col gap-y-4 p-4 border-t"
+          onSubmit={onSubmit}
+        >
+          <div className="flex flex-col gap-y-2">
+            <Label>Height</Label>
             <Input
               placeholder="Height"
               value={height}
@@ -155,10 +158,8 @@ export const SettingsSidebar = ({
               onChange={(e) => changeHeight(e.target.value)}
             />
           </div>
-          <div className="space-y-2">
-            <Label>
-              Width
-            </Label>
+          <div className="flex flex-col gap-y-2">
+            <Label>Width</Label>
             <Input
               placeholder="Width"
               value={width}
@@ -171,7 +172,7 @@ export const SettingsSidebar = ({
           </Button>
         </form>
         <div className="p-4">
-          <div className="space-y-2 mb-4">
+          <div className="flex flex-col gap-y-2 mb-4">
             <Label>Preset Backgrounds</Label>
             <div className="grid grid-cols-3 gap-2">
               {PRESET_BACKGROUNDS.map((preset) => (
@@ -180,7 +181,9 @@ export const SettingsSidebar = ({
                   type="button"
                   className={cn(
                     "h-16 rounded-md border-2 transition-all hover:scale-105",
-                    background === preset.color ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-300"
+                    background === preset.color
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-300"
                   )}
                   style={{ backgroundColor: preset.color }}
                   onClick={() => changeBackground(preset.color)}
@@ -191,7 +194,7 @@ export const SettingsSidebar = ({
               ))}
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             <Label>Custom Color</Label>
             <ColorPicker
               value={background as string} // We dont support gradients or patterns

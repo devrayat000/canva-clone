@@ -10,7 +10,7 @@ interface FillColorSidebarProps {
   editor: Editor | undefined;
   activeTool: ActiveTool;
   onChangeActiveTool: (tool: ActiveTool) => void;
-};
+}
 
 export const FillColorSidebar = ({
   editor,
@@ -31,7 +31,7 @@ export const FillColorSidebar = ({
     <aside
       className={cn(
         "bg-white relative border-r z-[40] w-[360px] h-full flex flex-col",
-        activeTool === "fill" ? "visible" : "hidden",
+        activeTool === "fill" ? "visible" : "hidden"
       )}
     >
       <ToolSidebarHeader
@@ -39,11 +39,8 @@ export const FillColorSidebar = ({
         description="Add fill color to your element"
       />
       <ScrollArea>
-        <div className="p-4 space-y-6">
-          <ColorPicker
-            value={value}
-            onChange={onChange}
-          />
+        <div className="p-4 flex flex-col gap-y-6">
+          <ColorPicker value={value} onChange={onChange} />
         </div>
       </ScrollArea>
       <ToolSidebarClose onClick={onClose} />

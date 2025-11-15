@@ -254,7 +254,7 @@ export const Editor = ({ initialData }: EditorProps) => {
               <UploadDropzone
                 appearance={{
                   container: cn(
-                    "absolute inset-0 m-2 border-2 border-dashed border-gray-300 bg-white/20 backdrop-blur-sm rounded-lg transition-opacity duration-200",
+                    "absolute inset-0 m-2 border-2 border-dashed border-gray-300 bg-white/20 backdrop-blur-xs rounded-lg transition-opacity duration-200",
                     dragging
                       ? "opacity-100 pointer-events-auto"
                       : "opacity-0 pointer-events-none"
